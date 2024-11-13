@@ -12,11 +12,22 @@ app.use(express.json());
 dotenv.config();
  
 //ENV File pulls
+//Env file should just be right next to the .js file and formatted as such below
 let PORT = process.env.PORT;
 //PORT=xxxx
 let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//JWT_SECRET_KEY= public RSA key here from a server (I use my wiki's RSA key, so you could make your own validation keys)
+//JWT_SECRET_KEY= public RSA key here from a server 
+//I use my wiki's RSA key, so you could make your own validation keys
 let SecretEncoder = process.env.SECRET_ENCODER;
+//SECRET_ENCODER=["EncrypterHelper1","EncrypterHelper2"]
+//These are for creating the player secrets later on! Mine are different ;P
+
+//TLDR:
+//Filename .env
+
+//PORT=XXXX
+//JWT_SECRET_KEY=""
+//SECRET_ENCODER=["EncrypterHelper1","EncrypterHelper2"]
 
 app.listen(PORT, () => {
     console.log(`Server is up and running on ${PORT} ...`);
