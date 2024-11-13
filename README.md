@@ -5,4 +5,4 @@
 The project is maintained by Duskitten / [Selkspace](https://selkspace.xyz), and is licensed under the [Cubiix Project License](https://cubiixproject.xyz/en/License)
 
 ## Installation Instructions:
-TBD
+Instructions to come
