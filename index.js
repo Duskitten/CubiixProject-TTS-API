@@ -21,6 +21,9 @@ let jwtSecretKey = process.env.JWT_SECRET_KEY;
 let SecretEncoder = process.env.SECRET_ENCODER;
 //SECRET_ENCODER=["EncrypterHelper1","EncrypterHelper2"]
 //These are for creating the player secrets later on! Mine are different ;P
+let isCubiixMainAPI = process.env.IS_CUBIIX_MAINAPI;
+//IS_CUBIIX_MAINAPI=false
+//This is for my personal server linked to the wiki
 
 //TLDR:
 //Filename .env
@@ -28,24 +31,49 @@ let SecretEncoder = process.env.SECRET_ENCODER;
 //PORT=XXXX
 //JWT_SECRET_KEY=""
 //SECRET_ENCODER=["EncrypterHelper1","EncrypterHelper2"]
+//IS_CUBIIX_MAINAPI=false
 
 app.listen(PORT, () => {
     console.log(`Server is up and running on ${PORT} ...`);
+    console.log(isCubiixMainAPI)
 });
  
 // Verification of JWT
 app.post("/user/validateToken", async (req, res) => {
     // Tokens are generally passed in header of request
     // Due to security reasons.
-    const token = req.header("userToken");
+    var token = req.header("userToken");
+    const tokenUser = req.header("userName");
+    const tokenPass = req.header("userPassword");
  
     try {
-        
-        const verified = jwt.verify(token, jwtSecretKey,{'algorithms': 'RS256'});
+        var verified
+        var plr
+        if (isCubiixMainAPI === "true"){
+            console.log("This Is Meep2!")
+            verified = jwt.verify(token, jwtSecretKey,{'algorithms': 'RS256'});
+            console.log(verified)
+            if (verified) {
+                 plr = jwt.decode(token, {'algorithms': 'RS256'})
+             }
+        } else if (isCubiixMainAPI === "false"){
+            console.log("This Is Meep!")
+
+            const authData = await pb.collection('users').authWithPassword(
+                tokenUser,
+                tokenPass,
+            );
+            console.log(authData["token"])
+            var token = authData["token"]
+            plr = jwt.decode(token, {header: true})
+            console.log(pb.authStore.token);
+            pb.authStore.clear();
+            console.log(plr)
+            verified = "hi"
+        }
 
         if (verified) {
-            var plr = jwt.decode(token, {'algorithms': 'RS256'})
-
+            console.log("Hai")
             var secret1 = plr["id"] + SecretEncoder[0] + plr["iat"] + SecretEncoder[1]  + plr["exp"] ;
             
             //We Add the iat and exp so that it changes every time we login
@@ -148,8 +176,6 @@ app.post("/user/setUser", async(req, res) => {
             const data = {
                 "playerdata": req.body
             }
-           
-
             var record = await pb.collection('character').update(result["items"][0]["id"], data);
         };
 
