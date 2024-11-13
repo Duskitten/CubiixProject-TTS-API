@@ -11,8 +11,11 @@ app.use(express.json());
 // Set up Global configuration access
 dotenv.config();
  
+//ENV File pulls
 let PORT = process.env.PORT;
+//PORT=xxxx
 let jwtSecretKey = process.env.JWT_SECRET_KEY;
+//JWT_SECRET_KEY= public RSA key here from a server (I use my wiki's RSA key, so you could make your own validation keys)
 let SecretEncoder = process.env.SECRET_ENCODER;
 
 app.listen(PORT, () => {
@@ -33,10 +36,10 @@ app.post("/user/validateToken", async (req, res) => {
             var plr = jwt.decode(token, {'algorithms': 'RS256'})
 
             var secret1 = plr["id"] + SecretEncoder[0] + plr["iat"] + SecretEncoder[1]  + plr["exp"] ;
-			
-			//We Add the iat and exp so that it changes every time we login
+            
+            //We Add the iat and exp so that it changes every time we login
             //The other two spots are secret keys to prevent Haxors lol
-			
+            
             var newHash1 = crypto.createHash('sha256',secret1).digest('hex')
 
             const result = await pb.collection('guidebook').getList(1, 1, {
