@@ -193,3 +193,49 @@ app.post("/user/setUser", async(req, res) => {
 }
 
 });
+
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
+
+app.post("/user/registerUser", async(req, res) => {
+
+    const tokenUser = req.header("userName");
+    const tokenPass = req.header("userPassword");
+    try {
+        //This path means the user already exists
+        const authData = await pb.collection('users').authWithPassword(
+            tokenUser,
+            tokenPass,
+        );
+        return res.send({"status":2, "returnmsg":"User Exists!"});
+    } catch (error) {
+        // This is the path to create the user
+        if (error["status"] == 400){
+            var Memail = await validateEmail(tokenUser)
+            console.log("user does not exist!")
+            if (Memail === null) {
+                return res.send({"status":10, "returnmsg":"Error no valid email."}); 
+                
+            } else {
+                if (tokenPass.length > 7 && tokenPass.length <= 72){
+                    const user = await pb.collection('users').create({
+                        email: tokenUser,
+                        password: tokenPass,
+                        passwordConfirm: tokenPass,
+                    });
+                    return res.send({"status":0, "returnmsg":"New user created successfully!"});
+                }
+                return res.send({"status":1, "returnmsg":"Password must be between 8 and 72 chars long."});
+            }
+            
+        }else{
+            return res.send({"status":error});
+        }
+    }
+
+});
