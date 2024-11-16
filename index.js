@@ -111,8 +111,6 @@ app.post("/user/validateToken", async (req, res) => {
             
             return res.send({"status":0, "returnmsg":"User found.", "userSecretCode":newHash1, "userID": plr["id"]});
         } else {
-            
-            // Access Denied
             return res.send({"status":1, "returnmsg":"User error."});
         }
     } catch (error) {
@@ -218,7 +216,7 @@ app.post("/user/registerUser", async(req, res) => {
                 var Memail = await validateEmail(tokenUser)
                 console.log("user does not exist!")
                 if (Memail === null) {
-                    return res.send({"status":10, "returnmsg":"Error no valid email."}); 
+                    return res.send({"status":1, "returnmsg":"Error no valid email."}); 
                     
                 } else {
                     if (tokenPass.length > 7 && tokenPass.length <= 72){
