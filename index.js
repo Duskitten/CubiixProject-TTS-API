@@ -109,16 +109,16 @@ app.post("/user/validateToken", async (req, res) => {
             }
 
             
-            return res.send({"status":0, "userSecretCode":newHash1, "userID": plr["id"]});
+            return res.send({"status":0, "returnmsg":"User found.", "userSecretCode":newHash1, "userID": plr["id"]});
         } else {
             
             // Access Denied
-            return res.send({"status":1});
+            return res.send({"status":1, "returnmsg":"User error."});
         }
     } catch (error) {
         
         // Access Denied
-        return res.send({"status":error});
+       return res.send({"status":1, "returnmsg":"User error."});
     }
 });
 
@@ -146,15 +146,15 @@ app.get("/user/getUser", async(req, res) => {
                 filter: 'userID = "'.concat( req.header("userID") ).concat('"')
             });
             //console.log(result)
-            return res.send({"status":result});
+            return res.send({"status":0, "returnmsg":"User found", "value":result});
         }
         else {
-            return res.send({"status":1});
+            return res.send({"status":1, "returnmsg":"Error: no user ID found"});
         }
 } catch (error) {
         
     // Access Denied
-    return res.send({"status":error});
+    return res.send({"status":1, "returnmsg":"User error."});
 }
 
 });
@@ -169,7 +169,7 @@ app.post("/user/setUser", async(req, res) => {
         });
         if (Object.keys(result["items"]).length === 0){
             //console.log("no player found!")
-            return res.send({"result":"Invalid player to edit"});
+             return res.send({"status":1, "returnmsg":"Invalid user."});
         }else{
            // console.log("playerfound!")
             
@@ -179,17 +179,15 @@ app.post("/user/setUser", async(req, res) => {
             var record = await pb.collection('character').update(result["items"][0]["id"], data);
         };
 
-
-
-        return res.send({"status":"OK"});
+         return res.send({"status":0, "returnmsg":"User saved successfully."});
     }
     else {
-        return res.send({"status":1});
+        return res.send({"status":1, "returnmsg":"User error."});
     }
 } catch (error) {
         
     // Access Denied
-    return res.send({"status":error});
+    return res.send({"status":1, "returnmsg":"User error."});
 }
 
 });
@@ -235,11 +233,11 @@ app.post("/user/registerUser", async(req, res) => {
                 }
                 
             }else{
-                return res.send({"status":error});
+                return res.send({"status":1, "returnmsg":"User exists."});
             }
         }
     } else {
-        return res.send({"status":69420, "returnmsg":"Sorry nerd, this is my wiki server, use the actual auth system >:3"});
+        return res.send({"status":1, "returnmsg":"Sorry nerd, this is my wiki server, use the actual auth system >:3"});
     }
 
 });
