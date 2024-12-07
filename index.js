@@ -163,7 +163,7 @@ app.get("/user/validateUser", async(req, res) => {
     //console.log(req.header("userID"))
     if (req.header("userID") && req.header("userSecretCode")){
         const result = await pb.collection('guidebook').getList(1, 1, {
-            filter: 'userID = "'.concat( req.header("userID") ).concat('" && userSecretCode = "').concat( req.header("userSecretCode") ).concat('"')
+            filter: 'userID = '.concat( req.header("userID") ).concat(' && userSecretCode = ').concat( req.header("userSecretCode") )
         });
         if (Object.keys(result["items"]).length === 0){
             //console.log("no player found!")
