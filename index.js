@@ -163,14 +163,14 @@ app.get("/user/validateUser", async(req, res) => {
     //console.log(req.header("userID"))
     if (req.header("userID") && req.header("userSecretCode")){
         const result = await pb.collection('guidebook').getList(1, 1, {
-            filter: 'userID = "'.concat( req.header("userID") ).concat('" && userSecretCode = ').concat( req.header("userSecretCode") )
+            filter: 'userID = "'.concat( req.header("userID") ).concat('" && userSecretCode = "').concat( req.header("userSecretCode") ).concat('"')
         });
         if (Object.keys(result["items"]).length === 0){
             //console.log("no player found!")
              return res.send({"status":1, "returnmsg":"Invalid user."});
         };
 
-         return res.send({"status":0, "returnmsg":"User saved successfully."});
+         return res.send({"status":0, "returnmsg":"User Found successfully."});
     }
     else {
         return res.send({"status":1, "returnmsg":"User error."});
@@ -178,7 +178,7 @@ app.get("/user/validateUser", async(req, res) => {
 } catch (error) {
         
     // Access Denied
-    return res.send({"status":1, "returnmsg":"User error."});
+    return res.send({"status":1, "returnmsg":"Access Denied"});
 }
 
 });
