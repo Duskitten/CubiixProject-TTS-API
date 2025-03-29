@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const PocketBase = require('pocketbase/cjs')
 const pb = new PocketBase('http://127.0.0.1:8090');
+const fs = require("fs");
+const path = require('path')
 
 const app = express();
 app.use(express.json());
@@ -134,6 +136,33 @@ app.get("/", async(req, res) => {
         "7--":"░░░░░░░░░░░            ▒                ▒",
         "8--":"░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒",
     });
+});
+
+app.get("/game/versionUrl", async(req, res) => {
+    fs.readFile("./cubiix_versions/current_version.txt","utf-8", (err,data) => {
+        if(err){
+         return res.send({"status":0, "returnmsg":"No VersionID Found"})
+        }
+        else {
+         return res.send({"API":data})
+        }
+
+    })
+});
+
+app.get("/game/versionDownload", async(req, res) => {
+    try {
+        if (req.header("versionID")){
+            res.sendFile(
+                path.join(__dirname,'./cubiix_versions/PCK/'+req.header("versionID")+'.pck')
+            )
+        }else{
+            return res.send({"status":0, "returnmsg":"No VersionID Found"});
+        }
+
+    }catch(error){
+        return res.send({"status":404, "returnmsg":"Update File Not Found."});
+    }
 });
 
 app.get("/user/getUser", async(req, res) => {

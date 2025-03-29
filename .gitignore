@@ -132,3 +132,4 @@ dist
 .pnp.*
 
 /pocketbase
+/cubiix_versions
